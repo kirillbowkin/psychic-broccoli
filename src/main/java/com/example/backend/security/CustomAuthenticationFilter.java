@@ -1,31 +1,30 @@
 package com.example.backend.security;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.backend.user.GoogleSocialProvider;
 import com.example.backend.user.User;
 import com.example.backend.user.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
@@ -43,11 +42,28 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         log.info("IN attemptAuthentication");
         String social_login = request.getParameter("social_provider");
         String social_token = request.getParameter("social_token");
+        String refresh = request.getParameter("refresh");
 
         if (social_login != null && social_token != null) {
             User user = userService.socialLogin(new GoogleSocialProvider(social_token));
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUsername(), "");
             return authenticationManager.authenticate(authenticationToken);
+        }
+
+        if (refresh != null) {
+            try {
+                JWTVerifier verifier = JWT.require(algorithm).build();
+                DecodedJWT decodedJWT = verifier.verify(refresh);
+                String username = decodedJWT.getSubject();
+
+                Optional<User> user = userService.getUser(username);
+                if(user.isPresent()) {
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(user.get().getUsername(), "");
+                    return authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+                }
+            } catch (Exception e) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid token");
+            }
         }
         return null;
 

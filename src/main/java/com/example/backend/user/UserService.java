@@ -1,5 +1,6 @@
 package com.example.backend.user;
 
+import com.auth0.jwt.algorithms.Algorithm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,9 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
+    public Optional<User> getUser(String username) {
+        return userRepository.findByUsername(username);
+    }
     public User socialLogin(SocialProvider socialProvider) {
         Map<String, String> userInfo = socialProvider.getUserInfo();
 
