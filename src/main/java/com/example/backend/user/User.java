@@ -24,6 +24,9 @@ public class User extends BaseEntity {
     @Column(name = "is_enabled")
     private Boolean isEnabled;
 
+    @Column(name = "is_social")
+    private Boolean isSocial;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),

@@ -1,10 +1,12 @@
 package com.example.backend;
 
+import com.auth0.jwt.algorithms.Algorithm;
 import com.example.backend.user.Role;
 import com.example.backend.user.RoleRepository;
 import com.example.backend.user.User;
 import com.example.backend.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +24,9 @@ public class BackendApplication {
 	private UserRepository userRepository;
 	@Autowired
 	private RoleRepository roleRepository;
+
+	@Value("${secret.key}")
+	private String secret_key;
 
 	public static void main(String[] args) {
 		SpringApplication.run(BackendApplication.class, args);
@@ -46,6 +51,11 @@ public class BackendApplication {
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
+	public Algorithm algorithm() {
+		return Algorithm.HMAC256(secret_key);
 	}
 
 }
