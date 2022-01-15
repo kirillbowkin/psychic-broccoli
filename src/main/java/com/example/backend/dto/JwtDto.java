@@ -1,5 +1,6 @@
-package com.example.backend.user;
+package com.example.backend.dto;
 
+import com.example.backend.model.user.User;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

@@ -1,6 +1,8 @@
-package com.example.backend.user;
+package com.example.backend.model.user;
 
-import com.auth0.jwt.algorithms.Algorithm;
+import com.example.backend.model.role.Role;
+import com.example.backend.model.role.RoleRepository;
+import com.example.backend.social.SocialProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -34,7 +36,7 @@ public class UserService {
         user.setUsername(userInfo.get("id"));
         user.setProfileName(userInfo.get("name"));
         user.setPassword(passwordEncoder.encode("")); //TODO: Think about password for social users
-        user.setAvatar_url(userInfo.get("picture"));
+        user.setAvatarUrl(userInfo.get("picture"));
         user.setIsEnabled(true);
         user.setEmail(userInfo.get("email"));
         user.setIsSocial(true);

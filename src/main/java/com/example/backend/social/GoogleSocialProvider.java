@@ -1,6 +1,5 @@
-package com.example.backend.user;
+package com.example.backend.social;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;

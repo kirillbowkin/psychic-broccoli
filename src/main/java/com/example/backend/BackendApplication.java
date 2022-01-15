@@ -1,10 +1,10 @@
 package com.example.backend;
 
 import com.auth0.jwt.algorithms.Algorithm;
-import com.example.backend.user.Role;
-import com.example.backend.user.RoleRepository;
-import com.example.backend.user.User;
-import com.example.backend.user.UserRepository;
+import com.example.backend.model.role.Role;
+import com.example.backend.model.role.RoleRepository;
+import com.example.backend.model.user.User;
+import com.example.backend.model.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -12,11 +12,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
-import java.util.UUID;
 
 @SpringBootApplication
 public class BackendApplication {

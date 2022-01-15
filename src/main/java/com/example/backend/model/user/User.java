@@ -1,5 +1,7 @@
-package com.example.backend.user;
+package com.example.backend.model.user;
 
+import com.example.backend.model.BaseEntity;
+import com.example.backend.model.role.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
@@ -24,7 +26,7 @@ public class User extends BaseEntity {
     private String email;
 
     @Column(name = "avatar_url")
-    private String avatar_url;
+    private String avatarUrl;
 
     @JsonIgnore
     @Column(name = "is_enabled")
