@@ -15,12 +15,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
+import java.util.HashSet;
 
 @SpringBootApplication
 public class BackendApplication {
 
-	@Autowired
-	private UserRepository userRepository;
 	@Autowired
 	private RoleRepository roleRepository;
 
@@ -32,19 +31,19 @@ public class BackendApplication {
 	}
 
 	@PostConstruct
-	public void loadUsers() {
-		User user = new User();
-		user.setUsername("test123");
-		user.setPassword(new BCryptPasswordEncoder().encode("1234"));
-		user.setIsEnabled(true);
+	public void setup() {
 
-		Role role = new Role();
-		role.setName("USER");
-		roleRepository.save(role);
-
-		user.setRoles(Collections.singleton(role));
-		userRepository.save(user);
-
+//		Role userRole = new Role();
+//		userRole.setName("USER");
+//
+//		Role adminRole = new Role();
+//		adminRole.setName("ADMIN");
+//		adminRole.setColor("red");
+//
+//		roleRepository.saveAll(new HashSet<>() {{
+//			add(userRole);
+//			add(adminRole);
+//		}});
 	}
 
 	@Bean

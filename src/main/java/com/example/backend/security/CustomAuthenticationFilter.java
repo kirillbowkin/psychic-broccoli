@@ -17,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -61,6 +62,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 if (user.isPresent()) {
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(user.get().getUsername(), "");
                     return authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+                } else {
+                    throw new UsernameNotFoundException("Username " + username + " not found");
                 }
             } catch (Exception e) {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid token");
