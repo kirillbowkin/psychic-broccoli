@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.backend.user.GoogleSocialProvider;
+import com.example.backend.user.JwtDto;
 import com.example.backend.user.User;
 import com.example.backend.user.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,7 +58,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 String username = decodedJWT.getSubject();
 
                 Optional<User> user = userService.getUser(username);
-                if(user.isPresent()) {
+                if (user.isPresent()) {
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(user.get().getUsername(), "");
                     return authenticationManager.authenticate(usernamePasswordAuthenticationToken);
                 }
@@ -71,7 +72,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        log.info("IN successfulAuthentication");
         List<String> roles = authResult.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
         String access_token = JWT.create()
                 .withSubject(authResult.getName())
@@ -84,13 +84,16 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000)) // 30 mins
                 .sign(algorithm);
 
-        Map<String, String> tokens = new HashMap<>() {{
-            put("access_token", access_token);
-            put("refresh_token", refresh_token);
-        }};
 
-        response.setContentType(APPLICATION_JSON_VALUE);
-        new ObjectMapper().writeValue(response.getWriter(), tokens);
+        Optional<User> optionalUser = userService.getUser(authResult.getName());
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            JwtDto jwtDto = new JwtDto().setUser(user).setAccess_token(access_token).setRefresh_token(refresh_token);
+
+            log.info("IN successfulAuthentication - user {} successfully authenticated", user.getProfileName());
+            response.setContentType(APPLICATION_JSON_VALUE);
+            new ObjectMapper().writeValue(response.getWriter(), jwtDto);
+        }
     }
 
 

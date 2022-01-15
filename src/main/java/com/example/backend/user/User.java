@@ -1,5 +1,6 @@
 package com.example.backend.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -12,6 +13,10 @@ public class User extends BaseEntity {
     @Column(name = "username")
     private String username;
 
+    @Column(name = "profile_name")
+    private String profileName;
+
+    @JsonIgnore
     @Column(name = "password")
     private String password;
 
@@ -21,9 +26,11 @@ public class User extends BaseEntity {
     @Column(name = "avatar_url")
     private String avatar_url;
 
+    @JsonIgnore
     @Column(name = "is_enabled")
     private Boolean isEnabled;
 
+    @JsonIgnore
     @Column(name = "is_social")
     private Boolean isSocial;
 

@@ -32,6 +32,7 @@ public class UserService {
         User user = new User();
         user.setId(UUID.randomUUID());
         user.setUsername(userInfo.get("id"));
+        user.setProfileName(userInfo.get("name"));
         user.setPassword(passwordEncoder.encode("")); //TODO: Think about password for social users
         user.setAvatar_url(userInfo.get("picture"));
         user.setIsEnabled(true);
