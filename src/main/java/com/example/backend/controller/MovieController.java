@@ -24,12 +24,21 @@ public class MovieController {
 
     private final MovieRepository movieRepository;
 
-    @PreAuthorize("permitAll()")
     @GetMapping()
     public List<Movie> getAll(@RequestParam("page") int page) {
         Page<Movie> moviesPages = movieRepository.findAll(PageRequest.of(page, 10, Sort.Direction.DESC, "createdAt"));
         List<Movie> movies = moviesPages.getContent();
         return movies;
+    }
+
+    @GetMapping("/search")
+    public List<Movie> search(@RequestParam("title") String title) {
+        Optional<List<Movie>> search = movieRepository.searchByTitle(title);
+        if(search.isPresent()) {
+            return search.get();
+        }
+
+        return null;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
