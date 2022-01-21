@@ -4,11 +4,12 @@ import com.example.backend.model.user.User;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.Map;
+
 @Data
 @Accessors(chain = true)
 public class JwtDto {
 
     private User user;
-    private String access_token;
-    private String refresh_token;
+    private Map<String, String> tokens;
 }

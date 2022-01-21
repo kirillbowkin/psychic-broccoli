@@ -91,7 +91,10 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         Optional<User> optionalUser = userService.getUser(authResult.getName());
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            JwtDto jwtDto = new JwtDto().setUser(user).setAccess_token(access_token).setRefresh_token(refresh_token);
+            JwtDto jwtDto = new JwtDto().setUser(user).setTokens(new HashMap<>() {{
+                put("access_token", access_token);
+                put("refresh_token", refresh_token);
+            }});
 
             log.info("IN successfulAuthentication - user {} successfully authenticated", user.getProfileName());
             response.setContentType(APPLICATION_JSON_VALUE);

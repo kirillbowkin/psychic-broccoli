@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -41,11 +38,21 @@ public class UserService {
         user.setEmail(userInfo.get("email"));
         user.setIsSocial(true);
 
+        Set<Role> roles = new HashSet<>();
+
         Optional<Role> optionalRole = roleRepository.findByName("USER");
         if (optionalRole.isPresent()) {
-            Role role = optionalRole.get();
-            user.setRoles(Collections.singleton(role));
+            Role userRole = optionalRole.get();
+            roles.add(userRole);
         }
+
+//        optionalRole = roleRepository.findByName("ADMIN");
+//        if(optionalRole.isPresent()) {
+//            Role adminRole = optionalRole.get();
+//            roles.add(adminRole);
+//        }
+
+        user.setRoles(roles);
 
         return userRepository.save(user);
 
