@@ -1,5 +1,6 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.MoviesDto;
 import com.example.backend.model.movie.Movie;
 import com.example.backend.model.movie.MovieRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,16 +26,18 @@ public class MovieController {
     private final MovieRepository movieRepository;
 
     @GetMapping()
-    public List<Movie> getAll(@RequestParam("page") int page) {
+    public MoviesDto getAll(@RequestParam("page") int page) {
         Page<Movie> moviesPages = movieRepository.findAll(PageRequest.of(page, 10, Sort.Direction.DESC, "createdAt"));
         List<Movie> movies = moviesPages.getContent();
-        return movies;
+        return new MoviesDto()
+                .setMovies(movies)
+                .setTotalPages(moviesPages.getTotalPages());
     }
 
     @GetMapping("/search")
     public List<Movie> search(@RequestParam("title") String title) {
         Optional<List<Movie>> search = movieRepository.searchByTitle(title);
-        if(search.isPresent()) {
+        if (search.isPresent()) {
             return search.get();
         }
 
