@@ -16,7 +16,7 @@ public abstract class BaseEntity {
     @Id
     @Type(type = "pg-uuid")
     @Column(name = "id")
-    @JsonIgnore
+    // @JsonIgnore
     private UUID id = UUID.randomUUID();
 
     @JsonIgnore
