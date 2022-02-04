@@ -5,6 +5,8 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
@@ -24,12 +26,14 @@ import java.util.stream.Collectors;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RequiredArgsConstructor
+@Slf4j
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
     private final Algorithm algorithm;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         if ("/login".equals(request.getServletPath())) {
             filterChain.doFilter(request, response);
         } else {
@@ -41,14 +45,16 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     DecodedJWT decodedJwt = verifier.verify(token);
 
                     String username = decodedJwt.getSubject();
-                    List<SimpleGrantedAuthority> roles = decodedJwt.getClaim("roles").asList(String.class).stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+                    List<SimpleGrantedAuthority> roles = decodedJwt.getClaim("roles").asList(String.class).stream()
+                            .map(SimpleGrantedAuthority::new).collect(Collectors.toList());
 
-                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username, null, roles);
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                            username, null, roles);
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                     filterChain.doFilter(request, response);
 
                 } catch (Exception e) {
-                    throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid token");
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 }
             } else {
                 filterChain.doFilter(request, response);

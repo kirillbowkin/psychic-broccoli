@@ -35,13 +35,13 @@ public class MovieController {
     }
 
     @GetMapping("/search")
-    public List<Movie> search(@RequestParam("title") String title) {
-        Optional<List<Movie>> search = movieRepository.searchByTitle(title);
-        if (search.isPresent()) {
-            return search.get();
-        }
-
-        return null;
+    public MoviesDto search(@RequestParam("title") String title, @RequestParam("page") int page) {
+        Page<Movie> moviesPages = movieRepository.searchByTitle(title,
+                PageRequest.of(page, 10, Sort.Direction.DESC, "createdAt"));
+        List<Movie> movies = moviesPages.getContent();
+        return new MoviesDto()
+                .setMovies(movies)
+                .setTotalPages(moviesPages.getTotalPages());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
