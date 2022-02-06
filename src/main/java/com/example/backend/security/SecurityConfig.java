@@ -32,14 +32,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), userService, algorithm);
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(
+                authenticationManagerBean(), userService, algorithm);
         http
                 .cors().and()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/login", "/api/movies", "/api/movies/search").permitAll()
+                .antMatchers("/login", "/api/movies", "/api/movies/search", "/api/watchRooms").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(customAuthenticationFilter)
@@ -51,6 +52,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-
 
 }
